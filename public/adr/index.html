@@ -602,13 +602,27 @@ function documentControlView(documents, documentTypes) {
 	return { types: types, docs: docs };
 }
 
-function getTemplate(hash) {
-  var articleId = calculatePartial(hash);
+function createRenderFunction(viewTemplateHtml) {
+	var viewTemplate = Handlebars.compile(viewTemplateHtml);
+	return function(viewData) {
+		var hash = window.location.hash;
+		var articleId = calculatePartial(hash);
+	    $("#content").html(viewTemplate(viewData));
+	    $("nav a[href='#" + articleId + "']").closest("li").addClass("active");
+	    $("#content article#" + articleId).fadeIn();
+		if (hash.indexOf("/") != -1) {
+			var display = hash.substr(1).split("/")[1];
+			$("#" + display).show();
+		}	  			
+	}
+}
 
+function getTemplate(hash) {
   if (!getTemplate.cache) {
   	getTemplate.cache = {}
   }
 
+  var articleId = calculatePartial(hash);
   if (getTemplate.cache[articleId]) {
   	return getTemplate.cache[articleId];
   }
@@ -619,17 +633,7 @@ function getTemplate(hash) {
 	  		url: (articleId === "documents" ? '../_common/' : '' ) + '_' + articleId + '.html',
 	  		method: 'GET'
 	  	}).then(function(data) {
-	  		var template = Handlebars.compile(data);
-	  		getTemplate.cache[articleId] = function(view) {
-			    $("#content").html(template(view));
-			    $("nav a[href='#" + articleId + "']").closest("li").addClass("active");
-			    $("#content article#" + articleId).fadeIn();
-  				var hash = window.location.hash;
-				if (hash.indexOf("/") != -1) {
-					var display = hash.substr(1).split("/")[1];
-					$("#" + display).show();
-				}	  			
-	  		};
+	  		getTemplate.cache[articleId] = createRenderFunction(data);
 	  		getTemplate.cache[articleId](view);
 	  	});  		
   	}
