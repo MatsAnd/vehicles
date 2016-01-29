@@ -1,0 +1,806 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ADR tilleggsgodkjenning</title>
+	<style type="text/css">
+/* CSS Mini Reset */
+
+html, body, div, form, fieldset, legend, label
+{
+ margin: 0;
+ padding: 0; 
+}
+
+table
+{
+ border-collapse: collapse;
+ border-spacing: 0;
+}
+
+th, td
+{
+ text-align: left;
+ vertical-align: top;
+}
+
+h1, h2, h3, h4, h5, h6, th, td, caption { font-weight:normal; }
+
+img { border: 0; }
+/* end CSS mini Reset */
+
+	body {
+		background-color: #ccc;
+	}
+	#content {
+		margin-left: 3em;
+		margin-right: 3em;
+		background-color: white;
+	}
+
+	#content article {
+		display: none;
+	}
+	#content article > div {
+		padding: 1rem;		
+	}
+
+	th {
+		border-top: 1px solid black;
+		font-weight: bold;
+	}
+
+	td {
+		min-width: 15em;
+	}
+	tr:nth-child(even) {
+		background-color: #ddd;
+	}
+
+	nav li a, nav li {
+		color: green;
+	}
+	nav li.active a, nav li.active {
+		color: orange;
+	}
+	body {
+		display: flex;
+		flex-direction: column;
+	}
+	nav ul {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		padding-left: 5em;
+		padding-right: 5em;
+	}
+	nav li {
+		display: block;
+		padding-right: 1em;
+		padding-left: 1em;
+
+	}
+	nav li::before {
+		content: "•";
+		display: block;
+		text-align: center;
+	}
+	h2 {
+		background-color: green;
+		color: white;
+		border-bottom: 3px solid orange;
+		padding-left: 1rem;
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+		margin: 0;
+	}
+	h3 {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+
+	.required {
+		color: red;
+	}
+
+	.required::before {
+		content: "*";
+	}
+
+	#addDocumentOverlay {
+		display: none;
+	    position: absolute;
+     	background-color: rgba(128, 128, 128, 0.6);
+ 	    left: 0px;
+	    top: 0px;
+	    height: 100%;
+	    width: 100%;
+ 	    z-index: 1000;
+	}
+
+	#addDocumentDialog {
+		background-color: white;
+    	margin: 100px;
+     	padding: 100px;		
+	}
+
+	#documentTypeCheckboxGroup label, #technicalData label {
+		min-width: 15em;
+		display: inline-block;
+	}
+
+	.inspectionQuestion select {
+		width: 15em;
+	}
+
+	.inspectionQuestionComment {
+		display: none;
+	}
+
+	</style>
+</head>
+<body>
+
+	<nav>
+		<ul>
+			<li><a href="#documents">Dokumentasjon</a></li>
+			<li><a href="#technicalSpecification">Teknisk kontroll</a></li>
+			<li><a href="#technicalInspection">Tekniske krav</a></li>
+			<li><a href="#technicalData">Teknisk data</a></li>
+			<li><a href="#approval">Godkjenning</a></li>
+		</ul>
+	</nav>
+
+	<section id="content">
+		<script type="text/x-handlebars-template" id="adrForm">
+			<article id="documents">
+				<h2>Dokumentasjon</h2>
+				<div>
+
+				<div id="addDocumentOverlay" class="dialog">
+					<div id="addDocumentDialog">
+						<form id="newDocument">
+							<h3>Legg til dokumentasjon</h3>
+							<div>
+								<input type="file" name="newDocument[file]" />
+							</div>
+							<div id="documentTypeCheckboxGroup">
+								{{#each documentControl.types}}
+									<label>
+										<input type="checkbox" value="{{id}}"
+											name="newDocument[roles][][id]" />
+										{{text}}
+										{{#if missingRequired}}
+										<span class="required"></span>
+										{{/if}}
+										{{#if comment}}
+										<input type="text" name="newDocument[roles][][comment]" />
+										{{/if}}
+									</label>
+								{{/each}}
+								<div>
+								* = Manglende dokumentasjon
+								</div>
+							</div>
+							<div>
+								<button id="addDocument">Legg til</button>
+								<p>
+								<a href="#documents">Avbryt</a>
+								</p>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<table>
+					<tr>
+						<th>Tilknyttede filer</th>
+						<th>Dokumenttyper</th>
+						<th>Offentlighetsstatus</th>
+						<th>Dato</th>
+						<th></th>
+					</tr>
+				{{#each documentControl.docs}}
+				<tr>
+					<td>{{filename}}</td>
+					<td>{{documentType}}</td>
+					<td>&nbsp</td>
+					<td><a href="#" class="deleteDocument" data-index="{{@index}}">Slett</a></td>
+				</tr>
+				{{/each}}
+				</table>
+				<div>
+					Følgende manglende påkrevende dokumenter mangler:
+					<ul>
+					{{#each documentControl.types}}
+						{{#if missingRequired}}
+						<li>{{text}}</li>
+						{{/if}}
+					{{/each}}
+					</ul>
+				</div>
+				<a href="#documents/addDocumentOverlay">Legg til</a>
+
+				</div>
+			</article>
+			<article id="technicalSpecification">
+			<h2>Teknisk kontroll</h2>
+			<div>
+				<form id="technicalControlForm">
+					{{#with technicalControl}}
+					<h3>Identitetskontroll</h3>
+						<div>
+							<label>
+							Dato for teknisk kontroll i hall
+							<input type="date" name="technicalControl[controlDate]" value="{{controlDate}}" />
+							</label>
+						</div>
+						{{#each questions}}
+							<div>
+								{{text}}
+								<input type="hidden" name="technicalControl[checkList][{{@index}}][id]" value="{{id}}" />
+								{{#check value}}
+									<label>
+										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+											value="yes">Ja
+									</label>
+									<label>
+										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+											value="no">Nei
+									</label>
+									<label>
+										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+											value="dontknow">Ikke vurdert
+									</label>
+								{{/check}}
+							</div>
+						{{/each}}
+					<h3>Teknisk kontroll av kjøretøy</h3>
+					<div>
+						<label>
+						Forrige tekniske kontroll (eks PKK) utført
+							<input type="date" name="technicalControl[previousControlDate]" value="{{previousControlDate}}" />
+						</label>
+					</div>
+					{{/with}}
+				</form>
+			</article>
+			<article id="technicalInspection">
+			<h2>Tekniske krav</h2>
+			<div>
+			<form>
+			{{#each technicalRequirements.questions}}
+				<div class="inspectionQuestion">
+					<h3>{{heading}}</h3>
+					<input type="hidden" name="technicalRequirements[questions][][id]" value="{{id}}" />
+		            <select name="technicalRequirements[questions][][value]" required>
+		              <option value>(Not selected)</option>
+		              {{#select value}}
+		                {{#each options}}
+		                  <option value={{value}}>{{text}}</option>
+		                {{/each}}
+		              {{/select}}
+		            </select>
+			        {{#if comment}}
+			            <button class="technicalControlEditComment">Redigere merknad</button>
+			            <div>
+				        There are comments: {{comment}}
+				        There are remarks: {{remark}}
+				        </div>
+			        {{else}}
+			            <button class="technicalControlAddComment">Legg til merknad</button>
+			        {{/if}}
+		            <div class="inspectionQuestionComment">
+			            <div>
+				            <label>Kommentar
+					            <textarea name="technicalRequirements[questions][][comment]">{{comment}}</textarea>
+			            	</label>
+		   	            </div>
+			            <div>
+				            <label>Bemerkning
+					            <textarea name="technicalRequirements[questions][][remark]">{{remark}}</textarea>
+			            	</label>
+		   	            </div>
+		   	            <div>
+				            <button class="technicalControlSaveComment">Lagre</button>
+			            </div>
+			        </div>
+		        </div>
+			{{/each}}
+
+			</div>
+			</form>
+			</article>
+			
+			<article id="technicalData">
+				<form>
+				{{#with request.technicalData}}
+				<h2>Teknisk data</h2>
+				<div>
+					<label>
+						Påbyggstype:
+						<select name="technicalData[extensionType]">
+							{{#select extensionType}}
+							<option value="1">Alu-/ståltopp (tank)</option>
+							<option value="2">Container</option>
+							<option value="3">Glassfibertopp (tank)</option>
+							<option value="4">Lukket</option>
+							<option value="5">Presening</option>
+							<option value="6">Veksel påbygg</option>
+							{{/select}}
+						</select>
+					</label>
+				</div>
+
+				<div>
+					<h3>Tank/batteri</h3>
+					<div>
+						<label>
+							Fabrikat:
+						</label>
+						<input type="text" name="technicalData[producer]" value="{{producer}}" />
+					</div>
+					<div>
+						<label>
+							Godkjenningsnummer:
+						</label>
+						<input type="text" name="technicalData[registrationNumber]" value="{{registrationNumber}}"/>
+					</div>
+					<div>
+						<label>
+							Serienummer:
+						</label>
+						<input type="text" name="technicalData[serialNumber]" value="{{serialNumber}}" />
+					</div>
+					<div>
+						<label>
+							Tankkode:
+						</label>
+						<select name="technicalData[tankCode]">
+							{{#select tankCode}}
+							<option value="C">C - komprimerte gasser</option>
+							<option value="L">L - stoffer i flytende form</option>
+							<option value="P">P - flytende gasser/oppløste gasser</option>
+							<option value="R">R - nedkjølte flytende gasser</option>
+							<option value="S">S - faste stoffer</option>
+							{{/select}}
+						</select>
+					</div>
+					<div>
+						<label>
+							Produksjonsår:
+						</label>
+						<input type="text" name="technicalData[productionYear]" value="{{productionYear}}" />
+					</div>
+					<div>
+						<h3>Rom/deltanker:</h3>
+
+						<div id="tankCompartments">
+							{{#each tankCompartments}}
+							<div class="tankCompartment">
+								<label>
+									Inndeling - volum (dm3):
+								</label>
+								<input type="number" name="technicalData[tankCompartments][]" value="{{this}}" />							
+								<a href="#" class="deleteTankCompartment">Slett</a>
+							</div>
+							{{/each}}
+						</div>
+
+						<div>
+							<a href="#" class="addTankCompartment">
+							Legg til tankinndeling
+							</a>
+						</div>
+						<div>
+							<label>
+								Antall rom/deltanker:
+							</label>
+							<input type="number" id="countTankCompartments" readonly=readonly />
+							<label>
+								Volum (samlet) (dm3):
+							</label>
+							<input type="number" id="sumTankCompartmentVolume" readonly=readonly />
+						</div>
+					</div>
+				</div>
+
+				<div>
+				<h3>Tetthet/trykktest</h3>
+					<div>
+						<label>
+							Siste tetthetstest utført:
+						</label>
+						<input type="date" name="technicalData[leakageTest]" value="{{leakageTest}}" />
+					</div>
+					<div>
+						<label>
+							Siste trykktest utført:
+						</label>
+						<input type="date" name="technicalData[pressureTest]" value="{{pressureTest}}" />
+					</div>
+				</div>
+
+				<div>
+				<h3>For tank-/batterikjøretøy: godkjent for følgende farlige gods</h3>
+
+					<div>
+						<label>
+						Stoffer tilatt i henhold til tankkode eller spesielle bestemmelser for TC og TE
+							<input type="checkbox" />
+						</label>
+					</div>
+					<div>
+						<label>
+							eller følgende angitte stoffer
+							<input type="text" />
+						</label>
+					</div>
+				</div>
+
+				<div>
+					<h3>For EX/II eller EX/III kjøretøy, godkjent for følgende farlige gods</h3>
+					<div>
+						Forenighetsgruppe J
+						<label>
+							<input type="radio">
+							Inkludert
+						</label>
+						<label>
+							<input type="radio">
+							Ekskludert
+						</label>
+				</div>
+				{{/with}}
+				</form>
+			</article>
+
+			<article id="approval">
+			<h2>Attestinformasjon</h2>
+			<div>
+
+				<div>
+					<label>
+					Utløpsdato for ADR-attest
+					</label>
+					<input type="date" />
+				</div>
+				<div>
+					<label>Attestmerknad (norsk)</label>
+					<input type="text" name="certification[approval][commentNorwegian]" value="{{commentNorwegian}}" />
+				</div>
+				<div>
+					<label>Attestmerknad (engelsk)</label>
+					<input type="text" name="certification[approval][commentEnglish]" value="{{commentEnglish}}" />
+				</div>
+			</div>
+			</article>
+		</script>
+	</section>
+	
+<script src="/vendor/jquery-1.12.0.js"></script>
+<script src="/vendor/jquery.serialize-object.js"></script>
+<script src="/vendor/handlebars-v4.0.5.js"></script>
+<script>
+var adrCertificationRequest = {
+	title: "The Title",
+	technicalRequirements: {
+		questions: [
+			{id: "1", value: "neida"},
+			{id: "2", value: 2, comment: "test", remark: "something"},
+			{id: "3", value: 1}
+		]
+	},
+	technicalControl: {
+		previousControlDate: "2013-01-01",
+		controlDate: "2016-01-30",
+		checkList: [
+			{ id: 123, value: "no" }
+		]
+	},
+	documents: [
+		{
+			filename: "scan.pdf",
+			roles: [{id:"123"}, {id:"12"}]
+		},
+		{
+			filename: "pic.jpeg",
+			roles: [{id:"1"}]
+		},
+	],
+	technicalData: {
+		extensionType: 2,
+		producer: "ABC Tank Fabrikat",
+		registrationNumber: "ABC123",
+		serialNumber: 442114,
+		productionYear: 2010,
+		tankCode: "S",
+		tankCompartments: [ 1000, 2050, null, null ],
+		leakageTest: "2013-11-20",
+		pressureTest: "2013-11-19"
+	}
+};
+
+var referenceData = {
+	inspectionQuestions: [
+		{
+			id: "1",
+			heading: "9.2.2.2 Ledninger",
+			options: [{value: 0, text: "Dekker ikke krav"}, {value: 1, text: "Ikke valgt"}, {value: "neida", text: "Ingen ledninger"}]
+		},
+		{
+			id: "2",
+			heading: "9.2.2.3 Hovedstrømbryter",
+			options: [{value: 0, text: "Dekker ikke krav"}, {value: 1, text: "Ikke valgt"}, {value: 2, text: "9.2.2.3"}]
+		},
+		{
+			id: "3",
+			heading: "9.2.2.4 Batterier",
+			options: [{value: 0, text: "Dekker ikke krav", requiresComment: true}, {value: 0, text: "Dekkes av annet krav", requiresComment: true}, {value: 1, text: "Ikke valgt"}, {value: 2, text: "9.2.2.3"}]
+		},
+		{
+			id: "4",
+			heading: "9.2.2.5 Kretser under konstant spenning",
+			options: [{value: 0, text: "Dekker ikke krav"}, {value: 1, text: "Ikke valgt"}, {value: 2, text: "9.2.2.3"}]
+		},
+		{
+			id: "5",
+			heading: "9.2.2.6 Elektriske installasjoner bak førerhuset",
+			options: [{value: 0, text: "Dekker ikke krav"}, {value: 1, text: "Ikke valgt"}, {value: 2, text: "9.2.2.3"}]
+		},
+		{
+			id: "6",
+			heading: "9.2.3.1 Bremseutstyr Blokkeringsfritt bremsesystem",
+			options: [{value: 0, text: "Dekker ikke krav"}, {value: 1, text: "Ikke valgt"}, {value: 2, text: "ADR/RID 9.2.2.6"}]
+		}
+	],
+	controlQuestions: [
+		{id: 123, text: "Samsvar mellom fabrikasjonsplate og dokumentasjon på tank?"},
+		{id: 124, text: "Samsvar mellom fabrikasjonsplate og dokumentasjon på kjøretøy?"},
+	],
+	documentTypes: [
+		{id: "123", text: "ADR attest", required: true },
+		{id: "124", text: "SFOOR anbefaling", required: true },
+		{id: "100", text: "Sjekkliste hallkontroll", required: true },
+		{id: "12", text: "Vedtak", required: false },
+		{id: "1", text: "Annet", required: false, comment: true },
+	]
+};
+
+
+var template = Handlebars.compile($("#adrForm").html());
+
+window.Handlebars.registerHelper('check', function(value, options) {
+  var $el = $('<div>').html($(options.fn(this)));
+  if (value) {
+	  $el.find('[value=' + value + ']').attr({'checked':'checked'});
+  }
+  return $el.html();
+});
+
+
+window.Handlebars.registerHelper('select', function(value, options) {
+  var $el = $('<select />').html( options.fn(this) );
+  if (value) {
+	  $el.find('[value=' + value + ']').attr({'selected':'selected'});
+  }
+  return $el.html();
+});
+
+function updateTankComponents() {
+	var components = $("#technicalData form").serializeObject().technicalData.tankCompartments;
+	var sum = 0;
+	var count = 0;
+	for (var i=0; i<components.length; i++) {
+		if (components[i]) {
+			count += 1;
+			sum += parseInt(components[i]);
+		}
+	}
+	$("#countTankCompartments").val(count);
+	$("#sumTankCompartmentVolume").val(sum);
+}
+
+
+function calculatePartial(hash) {
+	return hash ? hash.substr(1).split("/")[0] : "documents";
+}
+
+
+function technicalRequirementsView(technicalRequirements, inspectionQuestions) {
+	var noAnswer = {};
+	var questions = inspectionQuestions.map(function(question) {
+		var answer = technicalRequirements.questions.find(function(a) {
+			return a.id === question.id;
+		}) || noAnswer;
+		return {
+			id: question.id,
+			heading: question.heading,
+			options: question.options,
+			value: answer.value,
+			comment: answer.comment,
+			remark: answer.remark
+		};
+	});
+
+	return { questions: questions };
+}
+
+function technicalControlView(technicalControl, controlQuestions) {
+	var questions = controlQuestions.map(function(question) {
+		var control = technicalControl.checkList.find(function(control) {
+			return control.id.toString() === question.id.toString();
+		});
+		return {
+			name: "no" + question.id, id: question.id, text: question.text,
+			value: control ? control.value : undefined
+		};
+	});
+	return {
+		questions: questions,
+		previousControlDate: technicalControl.previousControlDate,
+		controlDate: technicalControl.controlDate
+	};
+}
+
+function documentControlView(documents, documentTypes) {
+	var types = documentTypes.map(function(type) {
+		var missingRequired = type.required;
+		documents.forEach(function(doc) {
+			doc.roles.forEach(function(role) {
+				if (role.id === type.id) {
+					missingRequired = false;
+				}
+			})
+		});
+
+		return {
+			id: type.id, text: type.text, comment: type.comment, missingRequired: missingRequired
+		};
+	});
+	var docs = documents.map(function(document) {
+		var type = document.roles.map(function(role) {
+			return documentTypes.find(function(type) {
+				return type.id === role.id;
+			}).text;
+		});
+		return {
+			filename: document.filename,
+			roles: document.roles,
+			documentType: type.join(", ")
+		}
+	});
+	return { types: types, docs: docs };
+}
+
+function getTemplate(hash) {
+  var articleId = calculatePartial(hash);
+
+  if (!getTemplate.cache) {
+  	getTemplate.cache = {}
+  }
+
+  if (getTemplate.cache[articleId]) {
+  	return getTemplate.cache[articleId];
+  }
+
+  if (articleId === "technicalData" || articleId === "documents") {
+  	return function(view) {
+	  	$.ajax({
+	  		url: (articleId === "documents" ? '../_common/' : '' ) + '_' + articleId + '.html',
+	  		method: 'GET'
+	  	}).then(function(data) {
+	  		var template = Handlebars.compile(data);
+	  		getTemplate.cache[articleId] = function(view) {
+			    $("#content").html(template(view));
+			    $("nav a[href='#" + articleId + "']").closest("li").addClass("active");
+			    $("#content article#" + articleId).fadeIn();
+  				var hash = window.location.hash;
+				if (hash.indexOf("/") != -1) {
+					var display = hash.substr(1).split("/")[1];
+					$("#" + display).show();
+				}	  			
+	  		};
+	  		getTemplate.cache[articleId](view);
+	  	});  		
+  	}
+  }
+  return;
+}
+
+
+
+function showPage() {
+  var hash = window.location.hash;
+  var articleId = calculatePartial(hash);
+  var view = {
+  	request: adrCertificationRequest,
+  	referenceData: referenceData,
+  	documentControl: documentControlView(adrCertificationRequest.documents, referenceData.documentTypes),
+  	technicalControl: technicalControlView(adrCertificationRequest.technicalControl, referenceData.controlQuestions),
+  	technicalRequirements: technicalRequirementsView(adrCertificationRequest.technicalRequirements, referenceData.inspectionQuestions),
+  	technicalData: adrCertificationRequest.technicalData
+  };
+
+  if (getTemplate(hash)) {
+  	return getTemplate(hash)(view);
+  }
+
+  $("#content").html(template(view));
+
+  $("#content article#" + articleId).fadeIn();
+  $("nav a[href='#" + articleId + "']").closest("li").addClass("active");
+
+  if (hash.indexOf("/") != -1) {
+	var display = hash.substr(1).split("/")[1];
+	$("#" + display).show();
+  }
+  updateTankComponents(); // HACK
+}
+
+function displayCurrentPage() {
+  var articleId = calculatePartial(window.location.hash);
+  $(".dialog").hide(); // HACK
+  $("nav li").removeClass("active");
+  if ($("#content > article:visible").length) {
+  	  var formObject = $("#content > article:visible form").serializeObject();
+  	  for (var field in formObject) {
+  	  	adrCertificationRequest[field] = formObject[field];
+  	  }
+	  $("#content > article:visible").fadeOut(showPage);
+  } else {
+  	showPage();
+  }
+}
+
+$(function() {
+	$(window).bind('hashchange', displayCurrentPage);
+	displayCurrentPage();
+
+	$("body").on("click", "#addDocument", function(event) {
+		event.preventDefault();
+		var newDocument = $("#newDocument").serializeObject();
+		newDocument.newDocument.filename = $("[name='newDocument[file]']").val(); // HACK
+		adrCertificationRequest.documents.push(newDocument.newDocument);
+		window.location.hash = "#documents";
+	});
+	$("body").on("click", ".deleteDocument", function(event) {
+		event.preventDefault();
+		adrCertificationRequest.documents.splice($(this).data("index"), 1);
+		displayCurrentPage();
+	});
+	$("body").on("click", ".deleteTankCompartment", function(event) {
+		event.preventDefault();
+		$(this).closest(".tankCompartment").remove();
+		updateTankComponents();
+	});
+	$("body").on("click", ".addTankCompartment", function(event) {
+		event.preventDefault();
+		var tankCompartment = $('<div class="tankCompartment">' +
+							'<label>' +
+								'Inndeling - volum (dm3):' +
+							'</label>' +
+							'<input type="number" name="technicalData[tankCompartments][]" value="{{this}}" />' +
+							'<a href="#" class="deleteTankCompartment">Slett</a>' +
+						'</div>');
+		$("#tankCompartments").append(tankCompartment);
+	});
+	$("body").on("change", ".tankCompartment", function(event) {
+		updateTankComponents();
+	});
+
+	$("body").on("click", ".technicalControlAddComment, .technicalControlEditComment", function(event) {
+		event.preventDefault();
+		$(this).closest(".inspectionQuestion").find(".inspectionQuestionComment").show();
+		$(this).prop("disabled", true);
+	});
+
+	$("body").on("click", ".technicalControlSaveComment", function(event) {
+		event.preventDefault();
+		$(this).closest(".inspectionQuestion").find(".inspectionQuestionComment").hide();
+		$(this).closest(".inspectionQuestion").find(".technicalControlAddComment, .technicalControlEditComment").prop("disabled", false);
+	});
+	
+});
+</script>
+</body>
+</html>
