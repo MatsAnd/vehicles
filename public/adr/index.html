@@ -144,7 +144,7 @@ img { border: 0; }
 		<ul>
 			<li><a href="#documents">Dokumentasjon</a></li>
 			<li><a href="#technicalSpecification">Teknisk kontroll</a></li>
-			<li><a href="#technicalInspection">Tekniske krav</a></li>
+			<li><a href="#technicalRequirements">Tekniske krav</a></li>
 			<li><a href="#technicalData">Teknisk data</a></li>
 			<li><a href="#approval">Godkjenning</a></li>
 		</ul>
@@ -152,258 +152,7 @@ img { border: 0; }
 
 	<section id="content">
 		<script type="text/x-handlebars-template" id="adrForm">
-			<article id="technicalSpecification">
-			<h2>Teknisk kontroll</h2>
-			<div>
-				<form id="technicalControlForm">
-					{{#with technicalControl}}
-					<h3>Identitetskontroll</h3>
-						<div>
-							<label>
-							Dato for teknisk kontroll i hall
-							<input type="date" name="technicalControl[controlDate]" value="{{controlDate}}" />
-							</label>
-						</div>
-						{{#each questions}}
-							<div>
-								{{text}}
-								<input type="hidden" name="technicalControl[checkList][{{@index}}][id]" value="{{id}}" />
-								{{#check value}}
-									<label>
-										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
-											value="yes">Ja
-									</label>
-									<label>
-										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
-											value="no">Nei
-									</label>
-									<label>
-										<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
-											value="dontknow">Ikke vurdert
-									</label>
-								{{/check}}
-							</div>
-						{{/each}}
-					<h3>Teknisk kontroll av kjøretøy</h3>
-					<div>
-						<label>
-						Forrige tekniske kontroll (eks PKK) utført
-							<input type="date" name="technicalControl[previousControlDate]" value="{{previousControlDate}}" />
-						</label>
-					</div>
-					{{/with}}
-				</form>
-			</article>
-			<article id="technicalInspection">
-			<h2>Tekniske krav</h2>
-			<div>
-			<form>
-			{{#each technicalRequirements.questions}}
-				<div class="inspectionQuestion">
-					<h3>{{heading}}</h3>
-					<input type="hidden" name="technicalRequirements[questions][][id]" value="{{id}}" />
-		            <select name="technicalRequirements[questions][][value]" required>
-		              <option value>(Not selected)</option>
-		              {{#select value}}
-		                {{#each options}}
-		                  <option value={{value}}>{{text}}</option>
-		                {{/each}}
-		              {{/select}}
-		            </select>
-			        {{#if comment}}
-			            <button class="technicalControlEditComment">Redigere merknad</button>
-			            <div>
-				        There are comments: {{comment}}
-				        There are remarks: {{remark}}
-				        </div>
-			        {{else}}
-			            <button class="technicalControlAddComment">Legg til merknad</button>
-			        {{/if}}
-		            <div class="inspectionQuestionComment">
-			            <div>
-				            <label>Kommentar
-					            <textarea name="technicalRequirements[questions][][comment]">{{comment}}</textarea>
-			            	</label>
-		   	            </div>
-			            <div>
-				            <label>Bemerkning
-					            <textarea name="technicalRequirements[questions][][remark]">{{remark}}</textarea>
-			            	</label>
-		   	            </div>
-		   	            <div>
-				            <button class="technicalControlSaveComment">Lagre</button>
-			            </div>
-			        </div>
-		        </div>
-			{{/each}}
-
-			</div>
-			</form>
-			</article>
 			
-			<article id="technicalData">
-				<form>
-				{{#with request.technicalData}}
-				<h2>Teknisk data</h2>
-				<div>
-					<label>
-						Påbyggstype:
-						<select name="technicalData[extensionType]">
-							{{#select extensionType}}
-							<option value="1">Alu-/ståltopp (tank)</option>
-							<option value="2">Container</option>
-							<option value="3">Glassfibertopp (tank)</option>
-							<option value="4">Lukket</option>
-							<option value="5">Presening</option>
-							<option value="6">Veksel påbygg</option>
-							{{/select}}
-						</select>
-					</label>
-				</div>
-
-				<div>
-					<h3>Tank/batteri</h3>
-					<div>
-						<label>
-							Fabrikat:
-						</label>
-						<input type="text" name="technicalData[producer]" value="{{producer}}" />
-					</div>
-					<div>
-						<label>
-							Godkjenningsnummer:
-						</label>
-						<input type="text" name="technicalData[registrationNumber]" value="{{registrationNumber}}"/>
-					</div>
-					<div>
-						<label>
-							Serienummer:
-						</label>
-						<input type="text" name="technicalData[serialNumber]" value="{{serialNumber}}" />
-					</div>
-					<div>
-						<label>
-							Tankkode:
-						</label>
-						<select name="technicalData[tankCode]">
-							{{#select tankCode}}
-							<option value="C">C - komprimerte gasser</option>
-							<option value="L">L - stoffer i flytende form</option>
-							<option value="P">P - flytende gasser/oppløste gasser</option>
-							<option value="R">R - nedkjølte flytende gasser</option>
-							<option value="S">S - faste stoffer</option>
-							{{/select}}
-						</select>
-					</div>
-					<div>
-						<label>
-							Produksjonsår:
-						</label>
-						<input type="text" name="technicalData[productionYear]" value="{{productionYear}}" />
-					</div>
-					<div>
-						<h3>Rom/deltanker:</h3>
-
-						<div id="tankCompartments">
-							{{#each tankCompartments}}
-							<div class="tankCompartment">
-								<label>
-									Inndeling - volum (dm3):
-								</label>
-								<input type="number" name="technicalData[tankCompartments][]" value="{{this}}" />							
-								<a href="#" class="deleteTankCompartment">Slett</a>
-							</div>
-							{{/each}}
-						</div>
-
-						<div>
-							<a href="#" class="addTankCompartment">
-							Legg til tankinndeling
-							</a>
-						</div>
-						<div>
-							<label>
-								Antall rom/deltanker:
-							</label>
-							<input type="number" id="countTankCompartments" readonly=readonly />
-							<label>
-								Volum (samlet) (dm3):
-							</label>
-							<input type="number" id="sumTankCompartmentVolume" readonly=readonly />
-						</div>
-					</div>
-				</div>
-
-				<div>
-				<h3>Tetthet/trykktest</h3>
-					<div>
-						<label>
-							Siste tetthetstest utført:
-						</label>
-						<input type="date" name="technicalData[leakageTest]" value="{{leakageTest}}" />
-					</div>
-					<div>
-						<label>
-							Siste trykktest utført:
-						</label>
-						<input type="date" name="technicalData[pressureTest]" value="{{pressureTest}}" />
-					</div>
-				</div>
-
-				<div>
-				<h3>For tank-/batterikjøretøy: godkjent for følgende farlige gods</h3>
-
-					<div>
-						<label>
-						Stoffer tilatt i henhold til tankkode eller spesielle bestemmelser for TC og TE
-							<input type="checkbox" />
-						</label>
-					</div>
-					<div>
-						<label>
-							eller følgende angitte stoffer
-							<input type="text" />
-						</label>
-					</div>
-				</div>
-
-				<div>
-					<h3>For EX/II eller EX/III kjøretøy, godkjent for følgende farlige gods</h3>
-					<div>
-						Forenighetsgruppe J
-						<label>
-							<input type="radio">
-							Inkludert
-						</label>
-						<label>
-							<input type="radio">
-							Ekskludert
-						</label>
-				</div>
-				{{/with}}
-				</form>
-			</article>
-
-			<article id="approval">
-			<h2>Attestinformasjon</h2>
-			<div>
-
-				<div>
-					<label>
-					Utløpsdato for ADR-attest
-					</label>
-					<input type="date" />
-				</div>
-				<div>
-					<label>Attestmerknad (norsk)</label>
-					<input type="text" name="certification[approval][commentNorwegian]" value="{{commentNorwegian}}" />
-				</div>
-				<div>
-					<label>Attestmerknad (engelsk)</label>
-					<input type="text" name="certification[approval][commentEnglish]" value="{{commentEnglish}}" />
-				</div>
-			</div>
-			</article>
 		</script>
 	</section>
 	
@@ -517,7 +266,14 @@ window.Handlebars.registerHelper('select', function(value, options) {
 });
 
 function updateTankComponents() {
-	var components = $("#technicalData form").serializeObject().technicalData.tankCompartments;
+	if (!$("#technicalData")) {
+		return;
+	}
+	var form = $("#technicalData form").serializeObject();
+	if (!form.technicalData) {
+		return;
+	}
+	var components = form.technicalData.tankCompartments;
 	var sum = 0;
 	var count = 0;
 	for (var i=0; i<components.length; i++) {
@@ -614,6 +370,7 @@ function createRenderFunction(viewTemplateHtml) {
 			var display = hash.substr(1).split("/")[1];
 			$("#" + display).show();
 		}	  			
+	    updateTankComponents(); // HACK: This should be generalized to calculating any derived data
 	}
 }
 
@@ -627,21 +384,24 @@ function getTemplate(hash) {
   	return getTemplate.cache[articleId];
   }
 
-  if (articleId === "technicalData" || articleId === "documents") {
-  	return function(view) {
+  var commonTemplates = [
+  	"documents", "technicalRequirements"
+  ];
+  var url = '_' + articleId + '.html';
+  if (commonTemplates.indexOf(articleId) != -1) {
+  	url = '../_common/' + url;
+  }
+
+  return function(view) {
 	  	$.ajax({
-	  		url: (articleId === "documents" ? '../_common/' : '' ) + '_' + articleId + '.html',
+	  		url: url,
 	  		method: 'GET'
 	  	}).then(function(data) {
 	  		getTemplate.cache[articleId] = createRenderFunction(data);
 	  		getTemplate.cache[articleId](view);
 	  	});  		
-  	}
-  }
-  return;
+  };
 }
-
-
 
 function showPage() {
   var hash = window.location.hash;
@@ -655,20 +415,7 @@ function showPage() {
   	technicalData: adrCertificationRequest.technicalData
   };
 
-  if (getTemplate(hash)) {
-  	return getTemplate(hash)(view);
-  }
-
-  $("#content").html(template(view));
-
-  $("#content article#" + articleId).fadeIn();
-  $("nav a[href='#" + articleId + "']").closest("li").addClass("active");
-
-  if (hash.indexOf("/") != -1) {
-	var display = hash.substr(1).split("/")[1];
-	$("#" + display).show();
-  }
-  updateTankComponents(); // HACK
+  return getTemplate(hash)(view);
 }
 
 function displayCurrentPage() {

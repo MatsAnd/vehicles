@@ -1,0 +1,42 @@
+<article id="technicalSpecification">
+<h2>Teknisk kontroll</h2>
+<div>
+<form id="technicalControlForm">
+	{{#with technicalControl}}
+	<h3>Identitetskontroll</h3>
+		<div>
+			<label>
+			Dato for teknisk kontroll i hall
+			<input type="date" name="technicalControl[controlDate]" value="{{controlDate}}" />
+			</label>
+		</div>
+		{{#each questions}}
+			<div>
+				{{text}}
+				<input type="hidden" name="technicalControl[checkList][{{@index}}][id]" value="{{id}}" />
+				{{#check value}}
+					<label>
+						<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+							value="yes">Ja
+					</label>
+					<label>
+						<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+							value="no">Nei
+					</label>
+					<label>
+						<input type="radio" name="technicalControl[checkList][{{@index}}][value]"
+							value="dontknow">Ikke vurdert
+					</label>
+				{{/check}}
+			</div>
+		{{/each}}
+	<h3>Teknisk kontroll av kjøretøy</h3>
+	<div>
+		<label>
+		Forrige tekniske kontroll (eks PKK) utført
+			<input type="date" name="technicalControl[previousControlDate]" value="{{previousControlDate}}" />
+		</label>
+	</div>
+	{{/with}}
+</form>
+</article>

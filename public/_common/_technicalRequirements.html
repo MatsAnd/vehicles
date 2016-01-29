@@ -1,0 +1,46 @@
+<article id="technicalRequirements">
+<h2>Tekniske krav</h2>
+<div>
+<form>
+{{#each technicalRequirements.questions}}
+	<div class="inspectionQuestion">
+		<h3>{{heading}}</h3>
+		<input type="hidden" name="technicalRequirements[questions][][id]" value="{{id}}" />
+        <select name="technicalRequirements[questions][][value]" required>
+          <option value>(Not selected)</option>
+          {{#select value}}
+            {{#each options}}
+              <option value={{value}}>{{text}}</option>
+            {{/each}}
+          {{/select}}
+        </select>
+        {{#if comment}}
+            <button class="technicalControlEditComment">Redigere merknad</button>
+            <div>
+	        There are comments: {{comment}}
+	        There are remarks: {{remark}}
+	        </div>
+        {{else}}
+            <button class="technicalControlAddComment">Legg til merknad</button>
+        {{/if}}
+        <div class="inspectionQuestionComment">
+            <div>
+	            <label>Kommentar
+		            <textarea name="technicalRequirements[questions][][comment]">{{comment}}</textarea>
+            	</label>
+	            </div>
+            <div>
+	            <label>Bemerkning
+		            <textarea name="technicalRequirements[questions][][remark]">{{remark}}</textarea>
+            	</label>
+	            </div>
+	            <div>
+	            <button class="technicalControlSaveComment">Lagre</button>
+            </div>
+        </div>
+    </div>
+{{/each}}
+
+</div>
+</form>
+</article>
