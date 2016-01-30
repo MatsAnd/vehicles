@@ -1,0 +1,35 @@
+@startuml
+  skinparam componentStyle uml2
+  package "ADR godkjenning" {
+    node Client {
+      [Frame] --> [Oversikt]
+      [Frame] --> [ADR Saksflyt]
+      [Oversikt] --> [jQuery.AJAX]
+      package "ADR Saksflyt" {
+        [dokumentkontroll.html] --> [AdrRequestController.js]
+        [teknisk_kontroll.html] --> [AdrRequestController.js]
+        [teknisk_data.html] --> [AdrRequestController.js]
+        [AdrRequestController.js] --> [jQuery.AJAX]
+      }
+      package "Oversikt"
+    }
+    node Server {
+      [DAOFramework]
+      [jQuery.AJAX] --> [FrontController]
+      package "Other"
+      package "ADR godkjenning Server" {
+        [FrontController] --> [AdrRequestController]
+        [ADR request domain]
+        [AdrRequestController] --> [AdrRequestDao]
+        [AdrRequestDao] --> [DAOFramework]
+      }
+      [Other] --> [DAOFramework]
+      [FrontController] --> [Other]
+    }
+    [DAOFramework] --> [Database]
+    database Database {
+      folder "Other tables..."
+      folder "ADR request table"
+    }
+  }
+@enduml

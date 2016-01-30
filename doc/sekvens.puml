@@ -1,0 +1,43 @@
+actor User
+box "Client"
+  participant applikasjon
+  participant adrFragment
+  participant tekniskKravFragment
+  participant nettleser
+end box
+participant server
+
+User -> applikasjon: Vis ADR skjema
+applikasjon -> server: Hent ADR skjema HTML fragment template
+note right of applikasjon: Fragmentene blir cachet (ikke vist)
+applikasjon -> server: Hent ADR skjemadata
+applikasjon <-- server: JSON
+applikasjon -> server: Hent ADR referansedata
+note left of server: Beregner (bl.a.) kravliste med regelmotor
+applikasjon <-- server: JSON
+applikasjon -> adrFragment: Evaluer template med skjema- og referansedata
+User <- adrFragment: HTML
+...
+User -> applikasjon: Klikk "Teknisk Krav"
+applikasjon -> nettleser: window.location.hash = "#technicalInspection"
+applikasjon <-- nettleser
+applikasjon <- nettleser: onhashchange
+applikasjon -> server: Hent HTML template fragment "tekniskeKrav"
+applikasjon <-- server
+applikasjon -> tekniskKravFragment: Evaluer template med skjema- og referansedata
+note right of applikasjon: Vi trenger ikke hentet data på nytt fra server
+loop hvert krav
+  tekniskKravFragment -> tekniskKravFragment: vis krav
+  tekniskKravFragment -> tekniskKravFragment: vis svarliste
+  tekniskKravFragment -> tekniskKravFragment: sett valgt svar i skjema
+end
+applikasjon <-- tekniskKravFragment
+User <-- applikasjon: HTML
+...
+User -> tekniskKravFragment: Oppdater svarene
+User -> tekniskKravFragment: Lagre
+tekniskKravFragment -> tekniskKravFragment: Serialize form object til JSON
+tekniskKravFragment -> server: POST tekniske krav JSON
+tekniskKravFragment <-- server
+User <-- tekniskKravFragment: "OK"
+
