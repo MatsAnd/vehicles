@@ -1,0 +1,22 @@
+{
+  "name": "vehicle-certifications",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steria/vehicles.git"
+  },
+  "author": "",
+  "license": "Proprietary",
+  "bugs": {
+    "url": "https://github.com/steria/vehicles/issues"
+  },
+  "homepage": "https://github.com/steria/vehicles#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
