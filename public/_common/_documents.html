@@ -41,15 +41,14 @@
 		<tr>
 			<th>Tilknyttede filer</th>
 			<th>Dokumenttyper</th>
-			<th>Offentlighetsstatus</th>
 			<th>Dato</th>
-			<th></th>
+			<th>&nbsp;</th>
 		</tr>
 	{{#each documentControl.docs}}
 	<tr>
 		<td>{{filename}}</td>
 		<td>{{documentType}}</td>
-		<td>&nbsp</td>
+		<td>&nbsp;</td>
 		<td><a href="#" class="deleteDocument" data-index="{{@index}}">Slett</a></td>
 	</tr>
 	{{/each}}
