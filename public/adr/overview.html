@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>ADR saksbehandling</title>
+	<link rel="stylesheet" href="../style/tilleggsgodkjenninger.css">
+</head>
+<body class="summaryPage">
+
+	<header><h2>Autosys Godkjenning - ADR godkjenning</h2></header>
+
+	<section id="content"></section>
+
+	<script type="template" id="overviewTemplate">
+		<section>
+			<section>
+				<h2>Saksinformasjon</h2>
+
+				<div>
+					<label>Saksstatus/sist oppdatert</label>
+					<input readonly=readonly type=date />
+				</div>
+				<div>
+					<label>Saksnummer</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Transportør</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Sakstype</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Saksundertype</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Tank/batterikjøretøy</label>
+					<input readonly=readonly type=checkbox />
+				</div>
+			</section>
+			<section>
+				<h3>Kjøretøyinformasjon</h3>
+
+				<div>
+					<label>Kjøretøystatus</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Kjennemerke</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Understellnummer</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Merke</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Handelsebetegnelse</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Kjøretøyklassifisering</label>
+					<input readonly=readonly />
+					<input readonly=readonly />
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Eier</label>
+					<input readonly=readonly />
+				</div>
+				<div>
+					<label>Godkjenning</label>
+					<input readonly=readonly />
+					<input readonly=readonly type=date />
+				</div>
+				<h4>Tilleggsgodkjenninger</h4>
+			</section>
+			<section>
+				<h2>Status</h2>
+
+				{{#each steps}}
+					<div class="stepStatus {{status}}">
+						<label>
+						<a href="{{link}}">{{name}}</a>
+						</label>
+						<span class="statusName"></span>
+					</div>
+				{{/each}}
+			</section>
+		</section>
+	</script>
+
+	
+<script src="/vendor/jquery-1.12.0.js"></script>
+<script src="/vendor/handlebars-v4.0.5.js"></script>
+<script src="adr.js"></script>
+<script>
+var template = Handlebars.compile($("#overviewTemplate").html());
+
+var view = {
+	steps: [
+		{ id: 1, link: "./#documents", name: "Dokumentkontroll", status: "complete" },
+		{ id: 2, link: "./#technicalSpecification", name: "Teknisk kontroll i hall", status: "not_started" },
+		{ id: 3, link: "./#technicalRequirements", name: "Tekniske krav", status: "incomplete" },
+		{ id: 4, link: "./#technicalData", name: "Tekniske data", status: "incomplete" },
+		{ id: 5, link: "./#approval", name: "Dokumentkontroll", status: "unavailable" },
+	]
+};
+
+
+$("#content").html(template(view));
+</script>
+</body>
+</html>

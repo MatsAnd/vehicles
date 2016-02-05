@@ -147,3 +147,42 @@ h3 {
 #tankCompartments .addTankCompartment {
 	margin-left: 20em;
 }
+
+
+.summaryPage label {
+	min-width: 15em;
+	display: inline-block;
+}
+
+
+.stepStatus.complete label:before {
+	// check
+}
+
+.stepStatus.not_started label:before {
+}
+
+.stepStatus.incomplete label:before {
+	content: "\2590\A0\258C";
+}
+
+
+.stepStatus.unavailable label:before {
+	// cross
+}
+
+.stepStatus.complete .statusName:before {
+	content: "OK";
+}
+
+.stepStatus.not_started .statusName:before {
+	content: "Ikke startet";
+}
+
+.stepStatus.incomplete .statusName:before {
+	content: "Påbegynt";
+}
+
+.stepStatus.unavailable .statusName:before {
+	content: "Ikke tilgjengelig";
+}
