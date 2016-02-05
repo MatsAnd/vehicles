@@ -14,24 +14,25 @@
             {{/each}}
           {{/select}}
         </select>
-        {{#if comment}}
+        <div class="hasComment">
             <button class="technicalControlEditComment">Redigere merknad</button>
             <div>
-	        There are comments: {{comment}}
-	        There are remarks: {{remark}}
+	        There are comments: <span class="commentText" />
+	        There are remarks: <span class="remarkText" />
 	        </div>
-        {{else}}
+        </div>
+        <div class="noComment">
             <button class="technicalControlAddComment">Legg til merknad</button>
-        {{/if}}
+        </div>
         <div class="inspectionQuestionComment">
             <div>
 	            <label>Kommentar
-		            <textarea name="technicalRequirements[questions][][comment]">{{comment}}</textarea>
+		            <textarea name="technicalRequirements[questions][][comment]" class="commentTextArea">{{comment}}</textarea>
             	</label>
 	            </div>
             <div>
 	            <label>Bemerkning
-		            <textarea name="technicalRequirements[questions][][remark]">{{remark}}</textarea>
+		            <textarea name="technicalRequirements[questions][][remark]" class="remarkTextArea">{{remark}}</textarea>
             	</label>
 	            </div>
 	            <div>

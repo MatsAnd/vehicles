@@ -5,7 +5,7 @@
 	<div>
 		<label>
 			Påbyggstype:
-			<select name="technicalData[extensionType]">
+			<select name="technicalData[extensionType]" id="technicalDataExtensionType">
 				{{#select extensionType}}
 				<option value="1">Alu-/ståltopp (tank)</option>
 				<option value="2">Container</option>
@@ -18,7 +18,7 @@
 		</label>
 	</div>
 
-	<div>
+	<div class="tankTechnicalData">
 		<h3>Tank/batteri</h3>
 		<div>
 			<label>
@@ -58,10 +58,10 @@
 			</label>
 			<input type="text" name="technicalData[productionYear]" value="{{productionYear}}" />
 		</div>
-		<div>
+		<div id="tankCompartments">
 			<h3>Rom/deltanker:</h3>
 
-			<div id="tankCompartments">
+			<div>
 				{{#each tankCompartments}}
 				<div class="tankCompartment">
 					<label>
@@ -71,28 +71,28 @@
 					<a href="#" class="deleteTankCompartment">Slett</a>
 				</div>
 				{{/each}}
+				<div>
+					<a href="#" class="addTankCompartment">
+					Legg til tankinndeling
+					</a>
+				</div>
 			</div>
 
 			<div>
-				<a href="#" class="addTankCompartment">
-				Legg til tankinndeling
-				</a>
+				<label>
+					Volum (samlet) (dm3):
+				</label>
+				<input type="number" id="sumTankCompartmentVolume" readonly=readonly tabindex="-1" />
 			</div>
 			<div>
 				<label>
 					Antall rom/deltanker:
 				</label>
-				<input type="number" id="countTankCompartments" readonly=readonly />
-				<label>
-					Volum (samlet) (dm3):
-				</label>
-				<input type="number" id="sumTankCompartmentVolume" readonly=readonly />
+				<input type="number" id="countTankCompartments" readonly=readonly tabindex="-1" />
 			</div>
 		</div>
-	</div>
 
-	<div>
-	<h3>Tetthet/trykktest</h3>
+		<h3>Tetthet/trykktest</h3>
 		<div>
 			<label>
 				Siste tetthetstest utført:
@@ -108,18 +108,18 @@
 	</div>
 
 	<div>
-	<h3>For tank-/batterikjøretøy: godkjent for følgende farlige gods</h3>
+		<h3>For tank-/batterikjøretøy: godkjent for følgende farlige gods</h3>
 
 		<div>
 			<label>
 			Stoffer tilatt i henhold til tankkode eller spesielle bestemmelser for TC og TE
-				<input type="checkbox" />
+				<input type="checkbox" name="technicalData[materialsAccordingToTankCode]" value="{{materialsAccordingToTankCode}}" />
 			</label>
 		</div>
 		<div>
 			<label>
 				eller følgende angitte stoffer
-				<input type="text" />
+				<input type="text" name="technicalData[materialsAllowed]" value="{{materialsAllowed}}"/>
 			</label>
 		</div>
 	</div>

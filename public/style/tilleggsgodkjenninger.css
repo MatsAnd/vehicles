@@ -1,0 +1,149 @@
+/* CSS Mini Reset */
+
+html, body, div, form, fieldset, legend, label
+{
+margin: 0;
+padding: 0; 
+}
+
+table
+{
+border-collapse: collapse;
+border-spacing: 0;
+}
+
+th, td
+{
+text-align: left;
+vertical-align: top;
+}
+
+h1, h2, h3, h4, h5, h6, th, td, caption { font-weight:normal; }
+
+img { border: 0; }
+/* end CSS mini Reset */
+
+body {
+	background-color: #ccc;
+}
+#content {
+	margin-left: 3em;
+	margin-right: 3em;
+	background-color: white;
+}
+
+#content article {
+	display: none;
+}
+#content article > div {
+	padding: 1rem;		
+}
+
+th {
+	border-top: 1px solid black;
+	font-weight: bold;
+}
+
+td {
+	min-width: 15em;
+}
+tr:nth-child(even) {
+	background-color: #ddd;
+}
+
+nav li a, nav li {
+	color: green;
+}
+nav li.active a, nav li.active {
+	color: orange;
+}
+body {
+	display: flex;
+	flex-direction: column;
+}
+nav ul {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	padding-left: 5em;
+	padding-right: 5em;
+}
+nav li {
+	display: block;
+	padding-right: 1em;
+	padding-left: 1em;
+
+}
+nav li::before {
+	content: "•";
+	display: block;
+	text-align: center;
+}
+h2 {
+	background-color: green;
+	color: white;
+	border-bottom: 3px solid orange;
+	padding-left: 1rem;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+	margin: 0;
+}
+h3 {
+	font-weight: bold;
+	text-decoration: underline;
+}
+
+.required {
+	color: red;
+}
+
+.required::before {
+	content: "*";
+}
+
+#addDocumentOverlay {
+	display: none;
+    position: absolute;
+ 	background-color: rgba(128, 128, 128, 0.6);
+	    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+	    z-index: 1000;
+}
+
+#addDocumentDialog {
+	background-color: white;
+	margin: 100px;
+ 	padding: 100px;		
+}
+
+#documentTypeCheckboxGroup label, #technicalData label {
+	min-width: 15em;
+	display: inline-block;
+}
+
+.inspectionQuestion select {
+	width: 15em;
+}
+
+.inspectionQuestionComment {
+	display: none;
+}
+
+#tankCompartments input {
+	width: 5em;
+	text-align: right;
+}
+
+#tankCompartments label {
+	width: 15em;
+}
+
+#tankCompartments .deleteTankCompartment {
+	padding-left: 0.4em;
+}
+
+#tankCompartments .addTankCompartment {
+	margin-left: 20em;
+}
