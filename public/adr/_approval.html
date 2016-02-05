@@ -1,20 +1,22 @@
 <article id="approval">
 <h2>Attestinformasjon</h2>
+{{#with request.approval}}
 <div>
 
 	<div>
 		<label>
 		Utløpsdato for ADR-attest
 		</label>
-		<input type="date" />
+		<input type="date" name="approval[expirationDate]" value="{{expirationDate}}" />
 	</div>
 	<div>
 		<label>Attestmerknad (norsk)</label>
-		<input type="text" name="certification[approval][commentNorwegian]" value="{{commentNorwegian}}" />
+		<input type="text" name="approval[commentNorwegian]" value="{{commentNorwegian}}" />
 	</div>
 	<div>
 		<label>Attestmerknad (engelsk)</label>
-		<input type="text" name="certification[approval][commentEnglish]" value="{{commentEnglish}}" />
+		<input type="text" name="approval[commentEnglish]" value="{{commentEnglish}}" />
 	</div>
 </div>
+{{/with}}
 </article>

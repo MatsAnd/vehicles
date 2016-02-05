@@ -34,6 +34,9 @@ var adrCertificationRequest = {
 		tankCompartments: [ 1000, 2050, null, null ],
 		leakageTest: "2013-11-20",
 		pressureTest: "2013-11-19"
+	},
+	approval: {
+		expirationDate: "2018-01-01"
 	}
 };
 
