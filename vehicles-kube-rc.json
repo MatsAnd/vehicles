@@ -1,0 +1,41 @@
+{
+  "kind": "ReplicationController",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "vehicles",
+    "labels": {
+      "state": "serving"
+    }
+  },
+  "spec": {
+    "replicas": 2,
+    "selector": {
+      "app": "web"
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app": "web"
+        }
+      },
+      "spec": {
+        "volumes": null,
+        "containers": [
+          {
+            "name": "vehicles-fe",
+            "image": "a06-d1-ora001/vehicles",
+            "ports": [
+              {
+                "containerPort": 8080,
+                "protocol": "TCP"
+              }
+            ],
+            "imagePullPolicy": "IfNotPresent"
+          }
+        ],
+        "restartPolicy": "Always",
+        "dnsPolicy": "ClusterFirst"
+      }
+    }
+  }
+}
